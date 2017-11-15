@@ -40,14 +40,20 @@ Stack<ValType>::~Stack()
 template <class ValType>
 void Stack<ValType>::push(ValType a)
 {
-	// здесь что делаем, если стек переполнен
+	if (topindex == size) 
+	{ 
+		ValType* tmp2 = new ValType[size * 2];
+		for (int i = 0;i < topindex;i++) 
+			tmp2[i] = p[i]; 
+		delete[] p;
+		p = tmp2;
+	}
 	p[topindex] = a;
 	topindex += 1;	
 }
 template <class ValType>
 void Stack<ValType>::clean()
 {
-	//возможно, нужно удалить все значения, которые лежали в стеке
 	topindex = 0;
 }
 template <class ValType>

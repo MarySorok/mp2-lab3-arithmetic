@@ -1,7 +1,7 @@
 // объ€вление функций и классов дл€ вычислени€ арифметических выражений
 #include <cstring>
 #include <cstdlib>
-#include  <ctype>
+#include  <cctype>
 #include "stack.h"
 #include <iostream>
 
