@@ -8,25 +8,34 @@
 using namespace std;
 typedef enum Lextype {op_br,cl_br,var,val,oper};
 
-struct Lexem // лексем
+class Lexem // лексем
 {
-	char str[20];
+	char str[10];
 	Lextype type;
 public:
-	Lexem(char*s, Lextype t);
+	Lexem();
 	Lexem(const Lexem &l);
 	Lexem& operator =(const Lexem&l);
 	bool operator ==(const Lexem&l);
+	void setlex(char* s)
+	{
+		for (int i = 0; i < strlen(s);i++)
+			str[i] = s[i];
+	}
+	void settype(Lextype t) { type = t; }
 };
-struct Variable // переменная и ее значение
+class Variable // переменная и ее значение
 {
 	char name[10];
 	double value;
+public:
+		Variable();
+		~Variable();
 };
 class Arithmetic
 {
-	char* inputstr;
-	Lexem* lexems;
+	char* input;
+	Lexem* lex;
 	int nLex;
 	Lexem* polish;
 	int np;

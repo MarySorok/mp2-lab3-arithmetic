@@ -23,6 +23,7 @@ public:
 	bool isempty();
 	void clean();
 	int getquantity() { return topindex; }
+	int getsize() { return size; }
 };
 
 template <class ValType>
