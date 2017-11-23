@@ -25,11 +25,19 @@ TYPED_TEST_CASE(StackTest, MyTypes);
 
 TYPED_TEST(StackTest, can_push)
 {
-
+	TypeParam a = (TypeParam)1;
+	s.push(a);
+	EXPECT_EQ(a, s.top());
 }
 TYPED_TEST(StackTest, can_pop)
 {
-
+	TypeParam a = (TypeParam)1;
+	TypeParam b = (TypeParam)4;
+	s.push(a);
+	s.push(b);
+	TypeParam c = s.pop();
+	EXPECT_EQ(b, c);
+	EXPECT_EQ(a, s.top());
 }
 TYPED_TEST(StackTest, cant_pop_element_if_stack_is_empty)
 {
@@ -47,5 +55,7 @@ TYPED_TEST(StackTest, can_clean_stack)
 }
 TYPED_TEST(StackTest, memory_allocation_if_stack_is_full)
 {
-
+	for (int i = 0;i <= 100;i++)
+		s.push((TypeParam)i);
+	EXPECT_EQ(200,s.getsize());
 }

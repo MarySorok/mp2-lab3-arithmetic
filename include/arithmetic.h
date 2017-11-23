@@ -1,4 +1,5 @@
 // объ€вление функций и классов дл€ вычислени€ арифметических выражений
+#pragma once
 #include <cstring>
 #include <cstdlib>
 #include  <cctype>
@@ -6,22 +7,18 @@
 #include <iostream>
 
 using namespace std;
-typedef enum Lextype {op_br,cl_br,var,val,oper};
+
+enum Lextype {op_br,cl_br,var,val,oper};
 
 class Lexem // лексем
 {
-	char str[10];
+	string s;
 	Lextype type;
 public:
-	Lexem();
-	Lexem(const Lexem &l);
+	Lexem() {};
 	Lexem& operator =(const Lexem&l);
 	bool operator ==(const Lexem&l);
-	void setlex(char* s)
-	{
-		for (int i = 0; i < strlen(s);i++)
-			str[i] = s[i];
-	}
+	void setlex(char* s1){ s = s1; }
 	void settype(Lextype t) { type = t; }
 };
 class Variable // переменна€ и ее значение
@@ -29,20 +26,32 @@ class Variable // переменна€ и ее значение
 	char name[10];
 	double value;
 public:
-		Variable();
-		~Variable();
+	Variable() {};
+	string getname() 
+	{ 
+		string s;
+		s = name; 
+		return s;
+	}
+	void setvalue(double v) { value = v; };
+	double getvalue() { return value; };
+	Variable& operator =(const Variable&v);
+	void setname(char* a) { strcpy(name, a);}
 };
 class Arithmetic
 {
-	char* input;
+	string s;
+
 	Lexem* lex;
 	int nLex;
+
 	Lexem* polish;
 	int np;
-	Variable*vars;
+
+	Variable* vars;
 	int nvars;
 public:
-	Arithmetic(char*s);
+	Arithmetic(string str);
 	int check();
 	void print_polish();
 	void set_vars();

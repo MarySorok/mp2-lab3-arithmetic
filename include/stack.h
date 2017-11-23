@@ -7,7 +7,7 @@
 // - получение количества элементов в стеке
 // - очистка стека
 // при вставке в полный стек должна перевыделяться память
-
+#pragma once
 template <class ValType>
 class Stack
 {
@@ -27,7 +27,7 @@ public:
 };
 
 template <class ValType>
-Stack<ValType>::Stack(int s= 1000)
+Stack<ValType>::Stack(int s)
 {
 	topindex = 0;
 	size = s;
@@ -62,6 +62,8 @@ bool Stack<ValType>::isempty()
 {
 	if (topindex == 0)
 		return true;
+	else 
+		return false;
 }
 template <class ValType>
 ValType Stack<ValType>::pop()
