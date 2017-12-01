@@ -47,7 +47,10 @@ void Stack<ValType>::push(ValType a)
 		for (int i = 0;i < topindex;i++) 
 			tmp2[i] = p[i]; 
 		delete[] p;
-		p = tmp2;
+		size = size*2;
+		p = new ValType[size];
+		for (int i = 0;i < topindex;i++) 
+			p[i] = tmp2[i];
 	}
 	p[topindex] = a;
 	topindex += 1;	

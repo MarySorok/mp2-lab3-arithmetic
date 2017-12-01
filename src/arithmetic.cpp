@@ -11,7 +11,7 @@ string rbr = "()";
 
 Variable& Variable::operator =(const Variable&v)
 {
-	strcpy(name,v.name);
+	name = v.name;
 	value = v.value;
 	return *this;
 }
@@ -27,19 +27,32 @@ bool Lexem::operator ==(const Lexem&l)
 		return false;
 	else
 	{
-		if (l.s != s)
+		if (s != l.s)
 			return false;
 		return true;
 	}
+}
+int Lexem::priority()
+
+{
+	int p;
+	if (s == "(")
+		p = 0;
+	if ((s == "+")||(s=="-"))
+		p = 1;
+	if ((s == "*")||(s=="/"))
+		p = 2;
+	return p;
 }
 Arithmetic::Arithmetic(string str)
 {
 	s = str;
 	lex = new Lexem[s.size()];
 	nLex = 0;
-	vars = new Variable[30];
+	vars = new Variable[10];
 	nvars = 0;
 	size_t p, p1, p2, p3;
+	int nbr=0;
 
 	//унарный минус (допускается "(-" и "-" в начале)
 
@@ -65,24 +78,31 @@ Arithmetic::Arithmetic(string str)
 		p1 = opbr.find(s[i]);
 		if (p1!= std::string::npos)
 		{
-			lex[nLex].setlex(&s[i]);
+			string opbrs;
+			opbrs = s[i];
+			lex[nLex].setlex(opbrs);
 			lex[nLex].settype(op_br);
 			nLex += 1;
-
+			nbr += 1;
 		}
 		//закрывающие скобочки:
 		p2 = clbr.find(s[i]);
 		if (p2!= std::string::npos)
 		{
-			lex[nLex].setlex(&s[i]);
+			string clbrs;
+			clbrs = s[i];
+			lex[nLex].setlex(clbrs);
 			lex[nLex].settype(cl_br);
 			nLex += 1;
+			nbr += 1;
 		}
 		//операции:
 		p3 = op.find(s[i]);
 		if (p3 != std::string::npos)
 		{
-			lex[nLex].setlex(&s[i]);
+			string ops;
+			ops = s[i];
+			lex[nLex].setlex(ops);
 			lex[nLex].settype(oper);
 			nLex += 1;
 		}
@@ -91,13 +111,14 @@ Arithmetic::Arithmetic(string str)
 		{
 			nvars += 1;
 			char a[10];
+			string as;
 			int j = 0;
 			while ((isalpha(s[i])!=0))
 			{
 				a[j] = s[i];
 				j++;
 				i++;
-				if (s[i] == '[')
+				if ((i<s.size())&&(s[i] == '['))
 				{
 					do
 					{
@@ -110,8 +131,10 @@ Arithmetic::Arithmetic(string str)
 				}
 				
 			 }
-			vars[nvars - 1].setname(a);
-			lex[nLex].setlex(a);
+			as = a;
+			as.erase(j+1);
+			vars[nvars - 1].setname(as);
+			lex[nLex].setlex(as);
 			lex[nLex].settype(var);
 			nLex += 1;
 		}
@@ -119,15 +142,20 @@ Arithmetic::Arithmetic(string str)
 		if (isdigit(s[i]) != 0)
 		{
 			char c[16];
+			string cs;
 			int j = 0;
 			while ((isdigit(s[i]) != 0)||(s[i]=='.'))
 			{
 				c[j] = s[i];
 				j++;
 				i++;
+				if (i >= s.size())
+					break;
 			}
 			i--;
-			lex[nLex].setlex(c);
+			cs = c;
+			cs.erase(j);
+			lex[nLex].setlex(cs);
 			lex[nLex].settype(val);
 			nLex += 1;
 		}
@@ -151,6 +179,9 @@ Arithmetic::Arithmetic(string str)
 	vars = new Variable[nvars];
 	for (int i = 0;i < nvars;i++)
 		vars[i] = v1[i];
+	//создали поле для перевода в польскую
+	polish = new Lexem[nLex - nbr];
+	np = 0;
 }
 int Arithmetic::check()  
 {
@@ -242,19 +273,112 @@ int Arithmetic::check()
 }
 void Arithmetic::print_polish()
 {
-
+	for (int i = 0; i < np;i++)
+		cout << polish[i].getstr();
+}
+void Arithmetic::Polish()
+{
+	Lexem c;
+	Stack <Lexem> st;
+	Lexem x;
+	int i = 0;
+	while (i < nLex)
+	{
+		c = lex[i];
+		if ((c.gettypy() == val) || (c.gettypy() == var))
+		{
+			polish[np] = c;
+			np += 1;
+	    }
+		if (c.gettypy() == op_br)
+			st.push(c);
+		if (c.gettypy() == oper)
+		{
+			if (st.isempty())
+				st.push(c);
+			else
+			{
+				x = st.top();
+				while (c.priority() <= x.priority())
+				{
+					x = st.pop();
+					polish[np] = x;
+					np += 1;
+					x = st.top();
+				}
+				st.push(c);
+			}
+		}
+			if (c.getstr() == ")")
+			{
+				x = st.pop();
+				while (x.getstr() != "(")
+				{
+					polish[np] = x;
+					np+=1;
+					x = st.pop();
+				}
+			}
+		i++;
+	}
+	while (!st.isempty())
+	{
+		x = st.pop();
+		polish[np] = x;
+		np+=1;
+	}
 }
 void Arithmetic::set_vars()
 {
 	double tmp;
 	for (int i = 0;i < nvars;i++)
 	{
-		cout << "Please, enter the value of the variable "<< endl;
+		string str = vars[i].getname();
+		cout << "Please, enter the value of the variable "<< str << endl;
 		cin >>tmp;
 		vars[i].setvalue(tmp);
 	}
 }
 double Arithmetic::calculate() 
 {
-	return 0;
+	double res;
+	Stack <double> st;
+	double x;
+	int nvar=0;
+	for (int i = 0; i < np;i++)
+	{
+		if (polish[i].gettypy() == val) 
+		{
+			char* c;
+			c = new char[polish[i].getstr().size()];
+			for (int j = 0;j < sizeof(c);i++)
+				c[i] = polish[i].getstr()[i];
+			x = atof(c);
+			st.push(x);
+		}
+		if (polish[i].gettypy() == var)
+		{
+			x = vars[nvar].getvalue();
+			st.push(x);
+			nvar += 1;
+		}
+		if (polish[i].gettypy() == oper)
+		{
+			double c, b = st.pop();
+			double a = st.pop();
+			if (polish[i].getstr() == "+")
+				c = a + b;
+			if (polish[i].getstr() == "-")
+				c = a - b;
+			if (polish[i].getstr() == "*")
+				c = a*b;
+			if (polish[i].getstr() == "/")
+				c = a/b;
+			st.push(c);
+		}
+	}
+	res = st.pop();
+	if (!st.isempty())
+		throw "something went wrong";
+	return res;
 }

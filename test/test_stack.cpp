@@ -55,7 +55,7 @@ TYPED_TEST(StackTest, can_clean_stack)
 }
 TYPED_TEST(StackTest, memory_allocation_if_stack_is_full)
 {
-	for (int i = 0;i <= 100;i++)
+	for (int i = 0;i < 102;i++)
 		s.push((TypeParam)i);
 	EXPECT_EQ(200,s.getsize());
 }
