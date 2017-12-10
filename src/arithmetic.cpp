@@ -131,8 +131,9 @@ Arithmetic::Arithmetic(string str)
 				}
 				
 			 }
+			i--;
 			as = a;
-			as.erase(j+1);
+			as.erase(j);
 			vars[nvars - 1].setname(as);
 			lex[nLex].setlex(as);
 			lex[nLex].settype(var);
@@ -235,7 +236,8 @@ int Arithmetic::check()
 				cout << "Error. Your expression shouldn't contain spaces.";
 				return 0;
 			}
-
+			if(i!=(s.length()-1))
+			{
 			p1 = op.find (s[i]);
 			p2 = op. find (s[i+1]);
 
@@ -257,6 +259,7 @@ int Arithmetic::check()
 			{
 				cout << "There is a mistake. You can't put " << s[i] << " before" << s[i + 1] << ". Try to correct the expression.";
 				return 0;
+			}
 			}
 
 		}
@@ -349,11 +352,7 @@ double Arithmetic::calculate()
 	{
 		if (polish[i].gettypy() == val) 
 		{
-			char* c;
-			c = new char[polish[i].getstr().size()];
-			for (int j = 0;j < sizeof(c);i++)
-				c[i] = polish[i].getstr()[i];
-			x = atof(c);
+			x = atof(polish[i].getstr().c_str());
 			st.push(x);
 		}
 		if (polish[i].gettypy() == var)
