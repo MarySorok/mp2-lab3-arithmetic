@@ -7,9 +7,8 @@ int main()
 {
 	string s;
 	int f;
-
-	cout << "Your arithmetic expression:\n"; 
-	do {
+    do {
+		cout << "Your arithmetic expression:\n";
 		getline(cin, s);
 		Arithmetic Exp(s);
 		f = Exp.check();

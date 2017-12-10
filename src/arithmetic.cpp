@@ -128,6 +128,7 @@ Arithmetic::Arithmetic(string str)
 					} while (s[i] != ']');
 
 					a[j] = s[i];
+					j++;
 				}
 				
 			 }
