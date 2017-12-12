@@ -10,6 +10,7 @@ int main()
     do {
 		cout << "Your arithmetic expression:\n";
 		getline(cin, s);
+		s = unary_minus(s);
 		Arithmetic Exp(s);
 		f = Exp.check();
        } while (f==0);

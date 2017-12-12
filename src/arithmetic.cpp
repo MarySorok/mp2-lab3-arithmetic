@@ -47,29 +47,12 @@ int Lexem::priority()
 Arithmetic::Arithmetic(string str)
 {
 	s = str;
+	size_t p, p1, p2, p3;
 	lex = new Lexem[s.size()];
 	nLex = 0;
 	vars = new Variable[10];
 	nvars = 0;
-	size_t p, p1, p2, p3;
-	int nbr=0;
-
-	//унарный минус (допускается "(-" и "-" в начале)
-
-	if (s[0] == '-')
-	{
-		s.insert(0, "0");
-	}
-	for (int i = 1; i < s.length(); i++)
-	{
-		p = opbr.find(s[i - 1]);
-		if ((s[i] == '-') && (p!=std::string::npos))
-		{
-			s.insert(i, "0");
-		}
-	}
-	/**/
-
+	int nbr = 0;
 	int i=0;
 	//разбиваем на лексемы:
 	while (i < s.size())
@@ -279,6 +262,7 @@ void Arithmetic::print_polish()
 {
 	for (int i = 0; i < np;i++)
 		cout << polish[i].getstr();
+	cout << "\n";
 }
 void Arithmetic::Polish()
 {
@@ -308,7 +292,9 @@ void Arithmetic::Polish()
 					x = st.pop();
 					polish[np] = x;
 					np += 1;
-					x = st.top();
+					if (!(st.isempty()))
+						x = st.top();
+					else break;
 				}
 				st.push(c);
 			}
@@ -381,4 +367,23 @@ double Arithmetic::calculate()
 	if (!st.isempty())
 		throw "something went wrong";
 	return res;
+}
+//унарный минус (допускается "(-" и "-" в начале)
+string unary_minus(string s)
+{
+	size_t p;
+
+	if (s[0] == '-')
+	{
+		s.insert(0, "0");
+	}
+	for (int i = 1; i < s.length(); i++)
+	{
+		p = opbr.find(s[i - 1]);
+		if ((s[i] == '-') && (p != std::string::npos))
+		{
+			s.insert(i, "0");
+		}
+	}
+	return s;
 }

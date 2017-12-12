@@ -1,6 +1,7 @@
 // объ€вление функций и классов дл€ вычислени€ арифметических выражений
 #pragma once
 #include <string>
+#include <cstring>
 #include <cstdlib>
 #include  <cctype>
 #include "stack.h"
@@ -59,3 +60,4 @@ public:
 	double calculate();
 	void Polish();
 };
+string unary_minus(string s);
