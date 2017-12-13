@@ -96,7 +96,7 @@ Arithmetic::Arithmetic(string str)
 			char a[10];
 			string as;
 			int j = 0;
-			while ((isalpha(s[i])!=0))
+			while ((i<s.size())&&(isalpha(s[i])!=0))
 			{
 				a[j] = s[i];
 				j++;
@@ -112,6 +112,7 @@ Arithmetic::Arithmetic(string str)
 
 					a[j] = s[i];
 					j++;
+					i++;
 				}
 				
 			 }
@@ -321,12 +322,25 @@ void Arithmetic::Polish()
 void Arithmetic::set_vars()
 {
 	double tmp;
+	bool f=true;
 	for (int i = 0;i < nvars;i++)
 	{
+		f = true;
+		for(int j=0;(j<i)&&(f);j++)
+		{
+			if(vars[i].getname()==vars[j].getname())
+			{
+				vars[i].setvalue(vars[j].getvalue());
+				f = false;
+			}
+		}
+		if (f)
+		{
 		string str = vars[i].getname();
 		cout << "Please, enter the value of the variable "<< str << endl;
 		cin >>tmp;
 		vars[i].setvalue(tmp);
+		}
 	}
 }
 double Arithmetic::calculate() 
